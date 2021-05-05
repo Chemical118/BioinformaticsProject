@@ -3,8 +3,8 @@
 RubisCO 단백질 서열 CNN!!
 
 ## 필요한 module (5/6 update)
-numpy
-matplotlib
-selenium
-pandas
-Biopython
+numpy  
+matplotlib  
+selenium  
+pandas  
+Biopython  
