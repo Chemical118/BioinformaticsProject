@@ -27,37 +27,46 @@ dtot_list = list(filter(lambda t: t[1] > 8, dtot_list))  # 8개 이상의 mutaio
 test_loca_list = list(map(lambda t: [t[0]], dtot_list))  # [[아미노산의 위치, motif 서열].. ]
 train_data = [[] for _ in range(len(data))]
 test_data = []
-
 for ind, val in enumerate(test_loca_list):
     test_loca_list[ind].append(choice(pro[ind][0]))
 
-# 원하는 값에 대해서 최대 최소 찾기
-tar = 4  # 1 : kcat, 2 : Kc, 3 : Sc/o, 4 : Eff.
-tar_min = min(map(lambda t: t[1][tar], data))
-tar_max = max(map(lambda t: t[1][tar], data))
-
-for i, sdata in enumerate(data):
-    train_data[i].append(np.zeros((len(test_loca_list), 1)))
-    train_data[i].append(np.zeros((10, 1)))
-    for ind, val in enumerate(test_loca_list):
-        pro_loc = val[0]
-        pro_mot = val[1]
-        train_data[i][0][ind] = blo62((pro_mot, sdata[0][pro_loc]))
-        tar_val = sdata[1][tar]
-        tar_ind = (tar_val - tar_min) / (tar_max - tar_min)
-        train_data[i][1][nums(tar_ind)] = 1
-
-for i in train_data:
-    test_data.append((i[0], np.argmax(i[1])))
-
 num_motif = len(test_loca_list)
-print(num_motif)
+bas_weight = [num_motif, int(1.5 * num_motif), 15, 10]
 
-net = network.Network([num_motif, int(1.5 * num_motif), 25, 10])
-net.SGD(train_data, 2000, 20, 0.7, test_data=test_data)
-plt.figure()
-plt.plot(net.history())
-plt.ylabel('val accuracy')
-plt.xlabel('epoch')
-plt.legend(['valid accuracy'])
-plt.show()
+
+def deeplearn(tar, net_weight, epochs=2000, mini_batch_size=15, eta=0.5, silent=False):
+    """
+    tar => 1 : kcat, 2 : Kc, 3 : Sc/o, 4 : Eff.
+    net_weight는 list로 반환한다, 맨 처음은 num_motif로 한다.
+    그 아래 값은 대부분 기본적인 값을 따른다, 많은 실험을 통해서 결정된 값들이다.
+    silent는 조용히 할지를 결정 할 수 있다. 기본은 False이다.
+    """
+    # 원하는 값에 대해서 최대 최소 찾기
+    tar_min = min(map(lambda t: t[1][tar], data))
+    tar_max = max(map(lambda t: t[1][tar], data))
+
+    for i, sdata in enumerate(data):
+        train_data[i].append(np.zeros((len(test_loca_list), 1)))
+        train_data[i].append(np.zeros((10, 1)))
+        for idx, va in enumerate(test_loca_list):
+            pro_loc = va[0]
+            pro_mot = va[1]
+            train_data[i][0][idx] = blo62((pro_mot, sdata[0][pro_loc]))
+            tar_val = sdata[1][tar]
+            tar_ind = (tar_val - tar_min) / (tar_max - tar_min)
+            train_data[i][1][nums(tar_ind)] = 1
+
+    for i in train_data:
+        test_data.append((i[0], np.argmax(i[1])))
+
+    net = network.Network(net_weight)
+    net.SGD(train_data, epochs, mini_batch_size, eta, silent, test_data=test_data)
+    plt.figure()
+    plt.plot(list(map(lambda t: t / len(train_data), net.history())))
+    plt.ylabel('val accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['valid accuracy'])
+    plt.show()
+
+
+deeplearn(2, bas_weight, epochs=4000, silent=False)

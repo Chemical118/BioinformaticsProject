@@ -135,8 +135,6 @@ for i in range(test_num_sample):
         test_train_data[i][1][j] = test_y_train[i, j]
     test_data.append((test_train_data[i][0], int(test_train_data[i][1][1])))
 
-print(train_data)
-print(test_data)
 net = network.Network([num_motif, int(1.5 * num_motif), 50, 10, 2])
 net.SGD(train_data, 200, 60, 1.0, test_data=test_data)
 print("execution time :", str(round(time.time() - st, 4)), "s")
