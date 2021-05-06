@@ -69,4 +69,4 @@ def deeplearn(tar, net_weight, epochs=2000, mini_batch_size=15, eta=0.5, silent=
     plt.show()
 
 
-deeplearn(2, bas_weight, epochs=4000, silent=False)
+deeplearn(4, bas_weight, epochs=3000, silent=False)
