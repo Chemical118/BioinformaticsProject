@@ -12,7 +12,8 @@ RubisCO 단백질 서열 CNN!!
 #### compro.py : motif의 개수를 알기 위해서 전처리를 실행하고, 이를 그래프로 그려 분석하는 .py  
 - process : 3개의 list를 반환하는 함수 (반환 형태는 주석 참고)
 #### main.py : CNN을 하기 위한 전처리 과정 + CNN 학습
-#### network.py : CNN을 구연한 .py [[출처]](https://github.com/MichalDanielDobrzanski/DeepLearningPython)  
+#### network.py : CNN을 구연한 .py [[출처]](https://github.com/MichalDanielDobrzanski/DeepLearningPython) 
+#### kmain.py : 같은 data를 CNN을 학습하기 위해 keras에 맞추어서 변형한 code (thanks to greendaygh)
 
 * * *
 ## 필요한 module
