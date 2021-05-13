@@ -51,11 +51,16 @@ if __name__ == "__main__":
 
     xti = [ti + 1 for ti in range(max(dnum_list))]
     rc('font', family="NanumGothic")
-    fig = plt.figure(figsize=(9.60, 7.20))
+    plt.figure(1, figsize=(9.60, 7.20))
     plt.plot(xti, ans)
     plt.xlabel("다른 서열을 가지는 Sample의 최소 개수")
     plt.ylabel("아미노산 위치의 개수")
     plt.title("Mutaion 위치와 최소 개수에 대한 그래프")
-    plt.xticks(xti)
+    plt.xticks(xti, [ti + 1 if not ti % 5 else "" for ti in range(max(dnum_list))])
 
+    plt.figure(2)
+    plt.hist(dnum_list, rwidth=0.9)
+    plt.xlim([1, 51])
+    plt.ylabel("아미노산 위치의 개수")
+    plt.title("Mutaion 위치의 Sample 개수 분포")
     plt.show()
