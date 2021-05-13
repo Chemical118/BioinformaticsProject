@@ -21,18 +21,15 @@ pro = pros[0]
 # [[Seq 단백질 서열, [종 이름, kcat, Kc, Sc/o, Eff., type (A or B), EMBL code], index].. ]
 
 dtot_list = list(zip(pros[1], pros[2]))  # dtot_list : [(아미노산 위치, mutation 개수).. ]
-dtot_list = list(filter(lambda t: t[1] > 8, dtot_list))  # 8개 이상의 mutaion을 가지는 dtot_list
+dtot_list = list(filter(lambda t: t[1] > 9, dtot_list))  # 8개 이상의 mutaion을 가지는 dtot_list
 test_loca_list = list(map(lambda t: [t[0]], dtot_list))  # [[아미노산의 위치, motif 서열].. ]
 num_data = len(data)
 num_motif = len(test_loca_list)
 train_data = np.zeros((num_data, num_motif))
 train_label = np.zeros((num_data, 10))
-print(num_motif)
 
 for ind, val in enumerate(test_loca_list):
-    print(val)
     len_list = list(map(lambda t: len(t), pro[val[0]][1].values()))
-    print(pro[val[0]][1].keys())
     test_loca_list[ind].append(pro[val[0]][0][np.argmax(len_list)])
 
 # 원하는 값에 대해서 최대 최소 찾기
@@ -48,7 +45,7 @@ for i, sdata in enumerate(data):
     tar_val = sdata[1][tar]
     tar_ind = (tar_val - tar_min) / (tar_max - tar_min)
     train_label[i][nums(tar_ind)] = 1
-print("sas")
+
 model = models.Sequential()
 model.add(layers.Dense(30, activation='sigmoid', input_shape=(num_motif,)))
 model.add(layers.Dense(10, activation='sigmoid'))
@@ -78,6 +75,7 @@ for i in range(2, 5):
 test_loss, test_acc = model.evaluate(train_data, train_label)
 print('test_acc: ', test_acc)
 model.save("keras_rubisco", overwrite=True)
+
 plt.figure(1)
 plt.plot(history.history['loss'])
 plt.plot(history.history['accuracy'])
