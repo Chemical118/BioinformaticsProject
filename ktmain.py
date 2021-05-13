@@ -19,15 +19,16 @@ pro = pros[0]
 
 # data_list는 아래와 같이 반환한다.
 # [[Seq 단백질 서열, [종 이름, kcat, Kc, Sc/o, Eff., type (A or B), EMBL code], index].. ]
-
+loc_list = [9, 14, 31, 86, 95, 97, 99, 142, 145, 149, 183, 189, 251, 255, 256, 262, 281, 328, 439, 449]   # 해당 위치의 motif
+loc_list = list(map(lambda t: t - 1, loc_list)) # 위치를 Python 기준으로 수정함
 dtot_list = list(zip(pros[1], pros[2]))  # dtot_list : [(아미노산 위치, mutation 개수).. ]
-dtot_list = list(filter(lambda t: t[1] > 8, dtot_list))  # 8개 이상의 mutaion을 가지는 dtot_list
+dtot_list = list(filter(lambda t: t[0] in loc_list, dtot_list))  # loc_list에 존재하는 위치 확인
+print(dtot_list)
 test_loca_list = list(map(lambda t: [t[0]], dtot_list))  # [[아미노산의 위치, motif 서열].. ]
 num_data = len(data)
 num_motif = len(test_loca_list)
 train_data = np.zeros((num_data, num_motif))
 train_label = np.zeros((num_data, 10))
-print(num_motif)
 
 for ind, val in enumerate(test_loca_list):
     print(val)
@@ -48,9 +49,10 @@ for i, sdata in enumerate(data):
     tar_val = sdata[1][tar]
     tar_ind = (tar_val - tar_min) / (tar_max - tar_min)
     train_label[i][nums(tar_ind)] = 1
-print("sas")
+
 model = models.Sequential()
-model.add(layers.Dense(30, activation='sigmoid', input_shape=(num_motif,)))
+model.add(layers.Dense(20, activation='sigmoid', input_shape=(num_motif,)))
+model.add(layers.Dense(15, activation='sigmoid'))
 model.add(layers.Dense(10, activation='sigmoid'))
 
 model.compile(optimizer='adam',
@@ -58,26 +60,17 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 model.summary()
 
-history = model.fit(train_data, train_label, epochs=2500, batch_size=None, verbose=1)
-
+history = model.fit(train_data, train_label, epochs=5000, batch_size=None, verbose=2)
 model_weight = model.get_weights()
 for idx, mo in enumerate(model_weight[0]):
-    test_loca_list[idx].append(sum(map(lambda t: t * t, mo)))  # i = 2일 때
-    test_loca_list[idx].append(sum(map(lambda t: abs(t), mo)))  # i = 3일 때
-    test_loca_list[idx].append(max(map(lambda t: abs(t), mo)))  # i = 4일 때
-for i in range(2, 5):
-    print("-------------")
-    test_loca_list.sort(key=lambda t: -t[i])
-    ref = [9, 14, 31, 86, 95, 97, 99, 142, 145, 149, 183, 189, 251, 255, 256, 262, 281, 328, 439, 449]  # 논문에 있는 자리
-    for da in test_loca_list:
-        te = ""
-        if da[0] + 1 in ref:
-            te = " ★"
-        print(str(da[0] + 1) + te)
+    test_loca_list[idx].append(max(map(lambda t: abs(t), mo)))
+test_loca_list.sort(key=lambda t: t[2])
+for da in test_loca_list:
+    print(da[0] + 1)
 
 test_loss, test_acc = model.evaluate(train_data, train_label)
 print('test_acc: ', test_acc)
-model.save("keras_rubisco", overwrite=True)
+
 plt.figure(1)
 plt.plot(history.history['loss'])
 plt.plot(history.history['accuracy'])

@@ -33,7 +33,7 @@ def process():
     for ind, val in enumerate(pro):
         if len(val[0]) != 1:
             d_list.append(ind)
-            dnum_list.append(min(map(lambda t: len(t), val[1].values())))
+            dnum_list.append(len(data) - max(map(lambda t: len(t), val[1].values())))  # 5/12 수정
     return pro, d_list, dnum_list
 
 

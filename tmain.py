@@ -22,8 +22,10 @@ pro = pros[0]
 # data_list는 아래와 같이 반환한다.
 # [[Seq 단백질 서열, [종 이름, kcat, Kc, Sc/o, Eff., type (A or B), EMBL code], index].. ]
 
+loc_list = [142, 183, 189, 262, 449, 14, 95, 99, 251, 228]   # 해당 위치의 motif
+loc_list = list(map(lambda t: t - 1, loc_list)) # 위치를 Python 기준으로 수정함
 dtot_list = list(zip(pros[1], pros[2]))  # dtot_list : [(아미노산 위치, mutation 개수).. ]
-dtot_list = list(filter(lambda t: t[1] > 8, dtot_list))  # 8개 이상의 mutaion을 가지는 dtot_list
+dtot_list = list(filter(lambda t: t[0] in loc_list, dtot_list))  # 8개 이상의 mutaion을 가지는 dtot_list
 test_loca_list = list(map(lambda t: [t[0]], dtot_list))  # [[아미노산의 위치, motif 서열].. ]
 print(test_loca_list)
 train_data = [[] for _ in range(len(data))]
