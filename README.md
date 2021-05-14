@@ -18,7 +18,7 @@ RubisCO 단백질 서열 CNN & 유전알고리즘을 이용한 최대 찾기
 #### kmain.py : 같은 data를 CNN을 학습하기 위해 keras에 맞추어서 변형한 code (thanks to greendaygh)
 #### ktmain.py : 같은 data를 논문에서 제시한 위치만 학습하도록 변형한 code
 #### keras_rubisco : 저장된 CNN Model  
-#### find.py : 저장된 Model을 이용헤서 유전알고리즘을 이용해 최대값 찾기
+#### find.py : 저장된 Model을 이용헤, 지시적 진화를 통해 최대값과 해당 단백질 서열 찾기  
 * * *
 ## 필요한 module
 numpy  

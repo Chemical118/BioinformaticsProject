@@ -46,7 +46,7 @@ for i, sdata in enumerate(data):
     tar_ind = (tar_val - tar_min) / (tar_max - tar_min)
     train_label[i][nums(tar_ind)] = 1
 
-model = models.Sequential()
+model = models.Sequential(name="BioInfoCNN")
 model.add(layers.Dense(30, activation='sigmoid', input_shape=(num_motif,)))
 model.add(layers.Dense(10, activation='sigmoid'))
 
@@ -55,7 +55,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 model.summary()
 
-history = model.fit(train_data, train_label, epochs=2500, batch_size=None, verbose=1)
+history = model.fit(train_data, train_label, epochs=10000, batch_size=None, verbose=1)
 
 model_weight = model.get_weights()
 for idx, mo in enumerate(model_weight[0]):
@@ -74,7 +74,7 @@ for i in range(2, 5):
 
 test_loss, test_acc = model.evaluate(train_data, train_label)
 print('test_acc: ', test_acc)
-model.save("keras_rubisco", overwrite=True)
+# model.save("keras_rubisco", overwrite=True)
 
 plt.figure(1)
 plt.plot(history.history['loss'])

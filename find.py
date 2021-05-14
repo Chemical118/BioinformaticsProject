@@ -2,6 +2,7 @@ from tensorflow.keras import models
 from compro import process
 from datas import blosum62 as blo62
 from datas import data_list
+from datetime import datetime
 import numpy as np
 import random as r
 
@@ -21,10 +22,11 @@ def random_gene(sset, num=3):
 
 
 tar = 4
-size = 100
+size = 500
 
 dtot_list = list(zip(pros[1], pros[2]))  # dtot_list : [(아미노산 위치, mutation 개수).. ]
 dtot_list = list(filter(lambda t: t[1] > 9, dtot_list))  # 8개 이상의 mutaion을 가지는 dtot_list
+loc_list = list(map(lambda t: t[0], dtot_list))
 sl_pro = []
 tot_iter = []
 tot_iterl = []
@@ -48,6 +50,9 @@ nptest = np.array(range(10))
 seq_set = random_gene(seq_set, num=2)
 ans = seq_set[0]
 cnt = 0
+with open("ans.txt", "w") as f:
+    now = datetime.now()
+    f.write("%d-%02d-%02d %02d:%02d:%02d\n" %(now.year, now.month, now.day, now.hour, now.minute, now.second))
 while True:
     cnt += 1
     train_data = np.zeros((len(seq_set), len(dtot_list)))
@@ -62,6 +67,14 @@ while True:
         seq_set[idx][1] = sum(test_val)
     seq_set.sort(key=lambda t: -t[1])
     if ans[1] < seq_set[0][1]:
-        print("%d세대 : %.5f" % (cnt, seq_set[0][1]))
         ans = seq_set[0]
+        ans_str = ""
+        for ind, val in enumerate(pro):
+            if ind in loc_list:
+                ans_str += ans[0][loc_list.index(ind)]
+            else:
+                len_list = list(map(lambda t: len(t), val[1].values()))
+                ans_str += val[0][np.argmax(len_list)]
+        with open("ans.txt", "a") as f:
+            f.write("%d %.5f %s\n" % (cnt, ans[1], ans_str))
     seq_set = seq_set[:20] + random_gene(seq_set[20:], num=3)
