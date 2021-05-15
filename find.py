@@ -22,7 +22,7 @@ def random_gene(sset, num=3):
 
 
 tar = 4
-size = 500
+size = 100
 
 dtot_list = list(zip(pros[1], pros[2]))  # dtot_list : [(아미노산 위치, mutation 개수).. ]
 dtot_list = list(filter(lambda t: t[1] > 9, dtot_list))  # 8개 이상의 mutaion을 가지는 dtot_list
@@ -52,7 +52,8 @@ ans = seq_set[0]
 cnt = 0
 with open("ans.txt", "w") as f:
     now = datetime.now()
-    f.write("%d-%02d-%02d %02d:%02d:%02d\n" %(now.year, now.month, now.day, now.hour, now.minute, now.second))
+    f.write("[%d-%02d-%02d %02d:%02d:%02d] Program Start\n" % (
+        now.year, now.month, now.day, now.hour, now.minute, now.second))
 while True:
     cnt += 1
     train_data = np.zeros((len(seq_set), len(dtot_list)))
@@ -76,5 +77,8 @@ while True:
                 len_list = list(map(lambda t: len(t), val[1].values()))
                 ans_str += val[0][np.argmax(len_list)]
         with open("ans.txt", "a") as f:
-            f.write("%d %.5f %s\n" % (cnt, ans[1], ans_str))
+            now = datetime.now()
+            f.write("[%d-%02d-%02d %02d:%02d:%02d] %d세대 %.5f %s\n" % (
+                now.year, now.month, now.day, now.hour, now.minute, now.second, cnt, ans[1], ans_str))
+        print("%d세대 : %.5f" % (cnt, ans[1]))
     seq_set = seq_set[:20] + random_gene(seq_set[20:], num=3)
