@@ -38,7 +38,7 @@ def process():
 
 
 if __name__ == "__main__":
-    # dnum_list 분석
+    # dnum_list 분석하는 코드
     d_list, dnum_list = process()[1:]
     print(d_list)  # 다른 경우를 가질 때의 아미노산 서열 + Python 순서라는 것에 주의!
     print(dnum_list)  # 이들이 몇개의 경우에서 mutaion이 검출되었는지 계산 + 순서는 위와 같음
