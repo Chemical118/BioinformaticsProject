@@ -8,33 +8,33 @@ def process():
     (pro, d_list, dnum_list)
     이들은 각각 아래와 같은 의미를 가진다
 
-    pro : 순서별로 몇개의 아미노산 종류가 있는지, 그것이 어느 것에는 어떤 것이 있는지 확인 ([[["M", "K"], {각각에 대한 딕셔너리}].. ]) + 또한 대상은 중복되지 않는다 (set과 같은 list라 생각하자)
-    d_list : 하나의 위치에 2개 이상의 아미노산을 가지는 대상들의 번호
-    dnum_list : d_list에서 가장 적은 개수를 가지는 아미노산의 개수 (몇개의 대상에서 mutaion이 일어났는지 확인)
+    pro : 순서별로 몇개의 아미노산 종류가 있는지, 그것이 어느 것에는 어떤 것이 있는지 확인 ([[["M", "K"], {각각에 대한 딕셔너리}].. ]) + 또한 대상은 중복되지 않는다 (set과
+    같은 list라 생각하자) d_list : 하나의 위치에 2개 이상의 아미노산을 가지는 대상들의 번호 dnum_list : d_list에서 가장 적은 개수를 가지는 아미노산의 개수 (몇개의 대상에서
+    mutaion이 일어났는지 확인)
     """
     from datas import data_list
     data = data_list()
     data = list(map(lambda t: t[0], data))  # 단순 단백질 서열 list로 변경
     len_data = len(data[0])  # data의 모든 길이는 같다
     pro = list()
-    for i in range(len_data):
+    for q in range(len_data):
         data_set = list()
         data_dict = dict()
         for ind, val in enumerate(data):
-            tar = str(val[i])
+            tar = str(val[q])
             if tar not in data_set:
                 data_dict[tar] = []
                 data_set.append(tar)
             data_dict[tar].append(ind)
         pro.append([data_set, data_dict])
-    d_list = list()
-    dnum_list = list()
+    dt_list = list()
+    dtnum_list = list()
 
     for ind, val in enumerate(pro):
         if len(val[0]) != 1:
-            d_list.append(ind)
-            dnum_list.append(len(data) - max(map(lambda t: len(t), val[1].values())))  # 5/12 수정 (최소가 아닌 최대의 나머지 개수)
-    return pro, d_list, dnum_list
+            dt_list.append(ind)
+            dtnum_list.append(len(data) - max(map(lambda t: len(t), val[1].values())))  # 5/12 수정 (최소가 아닌 최대의 나머지 개수)
+    return pro, dt_list, dtnum_list
 
 
 if __name__ == "__main__":

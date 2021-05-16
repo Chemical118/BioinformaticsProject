@@ -15,7 +15,7 @@ for ind, val in enumerate(df_list):
     driver.get('https://www.uniprot.org/uniprot/?query=' + uni_name)
     driver.implicitly_wait(5)
     uni_id = driver.find_element_by_class_name("entryID").text
-    res = req.post("http://www.uniprot.org/uniprot/" + uni_id + ".fasta")
+    res = req.post("https://www.uniprot.org/uniprot/" + uni_id + ".fasta")
     data = ''.join(res.text)
     with open("data/" + str(ind) + ".fasta", "w") as f:
         f.write(data)
