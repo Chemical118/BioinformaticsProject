@@ -50,7 +50,7 @@ nptest = np.array(range(10))
 seq_set = random_gene(seq_set, num=2)
 ans = seq_set[0]
 cnt = 0
-with open("ans/ans.txt", "w") as f:
+with open("ans/ans.txt", "w", encoding='utf-8') as f:
     now = datetime.now()
     f.write("[%d-%02d-%02d %02d:%02d:%02d] Program Start\n" % (
         now.year, now.month, now.day, now.hour, now.minute, now.second))
@@ -76,7 +76,7 @@ while True:
             else:
                 len_list = list(map(lambda t: len(t), val[1].values()))
                 ans_str += val[0][np.argmax(len_list)]
-        with open("ans/ans.txt", "a") as f:
+        with open("ans/ans.txt", "a", encoding='utf-8') as f:
             now = datetime.now()
             f.write("[%d-%02d-%02d %02d:%02d:%02d] %d세대 %.5f %s\n" % (
                 now.year, now.month, now.day, now.hour, now.minute, now.second, cnt, ans[1], ans_str))

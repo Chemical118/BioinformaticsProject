@@ -6,7 +6,7 @@ from datas import data_list
 from datas import nums
 import matplotlib.pyplot as plt
 import numpy as np
-import time
+
 pros = process()
 data = data_list()
 pro = pros[0]
@@ -54,14 +54,13 @@ model.compile(optimizer='adam',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 model.summary()
-history = model.fit(train_data, train_label, epochs=2500, batch_size=None, verbose=1)
+history = model.fit(train_data, train_label, epochs=10000, batch_size=None, verbose=1)
 
 test_loss, test_acc = model.evaluate(train_data, train_label)
 print('test_acc: ', test_acc)
 print('test_loss: ', test_loss)
-with open("ans/kmain.txt", "w") as f:
+with open("ans/kmain.txt", "w", encoding='utf-8') as f:
     model.summary(print_fn=lambda t: f.write(t + "\n"))
-    time.sleep(3)
     f.write("test_acc : %.4f\ntest_loss : %.4f\n-------------\n" % (test_acc, test_loss))
 model_weight = model.get_weights()
 for idx, mo in enumerate(model_weight[0]):
@@ -74,7 +73,7 @@ for da in test_loca_list:
     if da[0] + 1 in ref:
         te = " ★"
     print(str(da[0] + 1) + te)
-    with open("ans/kmain.txt", "a") as f:
+    with open("ans/kmain.txt", "a", encoding='utf-8') as f:
         f.write(str(da[0] + 1) + te + "\n")
 
 # model.save("keras_rubisco", overwrite=True)
