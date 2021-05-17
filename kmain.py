@@ -6,7 +6,7 @@ from datas import data_list
 from datas import nums
 import matplotlib.pyplot as plt
 import numpy as np
-
+import time
 pros = process()
 data = data_list()
 pro = pros[0]
@@ -46,7 +46,7 @@ for i, sdata in enumerate(data):
     tar_ind = (tar_val - tar_min) / (tar_max - tar_min)
     train_label[i][nums(tar_ind)] = 1
 
-model = models.Sequential(name="BioInfoCNN")
+model = models.Sequential(name='BioInfoCNN')
 model.add(layers.Dense(30, activation='sigmoid', input_shape=(num_motif,)))
 model.add(layers.Dense(10, activation='sigmoid'))
 
@@ -54,26 +54,29 @@ model.compile(optimizer='adam',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 model.summary()
-
-history = model.fit(train_data, train_label, epochs=10000, batch_size=None, verbose=1)
-
-model_weight = model.get_weights()
-for idx, mo in enumerate(model_weight[0]):
-    test_loca_list[idx].append(sum(map(lambda t: t * t, mo)))  # i = 2일 때
-    test_loca_list[idx].append(sum(map(lambda t: abs(t), mo)))  # i = 3일 때
-    test_loca_list[idx].append(max(map(lambda t: abs(t), mo)))  # i = 4일 때
-for i in range(2, 5):
-    print("-------------")
-    test_loca_list.sort(key=lambda t: -t[i])
-    ref = [9, 14, 31, 86, 95, 97, 99, 142, 145, 149, 183, 189, 251, 255, 256, 262, 281, 328, 439, 449]  # 논문에 있는 자리
-    for da in test_loca_list:
-        te = ""
-        if da[0] + 1 in ref:
-            te = " ★"
-        print(str(da[0] + 1) + te)
+history = model.fit(train_data, train_label, epochs=2500, batch_size=None, verbose=1)
 
 test_loss, test_acc = model.evaluate(train_data, train_label)
 print('test_acc: ', test_acc)
+print('test_loss: ', test_loss)
+with open("ans/kmain.txt", "w") as f:
+    model.summary(print_fn=lambda t: f.write(t + "\n"))
+    time.sleep(3)
+    f.write("test_acc : %.4f\ntest_loss : %.4f\n-------------\n" % (test_acc, test_loss))
+model_weight = model.get_weights()
+for idx, mo in enumerate(model_weight[0]):
+    test_loca_list[idx].append(sum(map(lambda t: t * t, mo)))
+print("-------------")
+test_loca_list.sort(key=lambda t: -t[2])
+ref = [9, 14, 31, 86, 95, 97, 99, 142, 145, 149, 183, 189, 251, 255, 256, 262, 281, 328, 439, 449]  # 논문에 있는 자리
+for da in test_loca_list:
+    te = ""
+    if da[0] + 1 in ref:
+        te = " ★"
+    print(str(da[0] + 1) + te)
+    with open("ans/kmain.txt", "a") as f:
+        f.write(str(da[0] + 1) + te + "\n")
+
 # model.save("keras_rubisco", overwrite=True)
 
 plt.figure(1)
