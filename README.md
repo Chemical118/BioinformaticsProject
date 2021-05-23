@@ -8,6 +8,7 @@ RubisCO 단백질 서열 CNN & 유전알고리즘을 이용한 최대 찾기
 - 코드에 오류 수정 (70%에서 88%수준으로 정확도 향상)
 * * *
 ## 파일 설명
+#### afblastp.py : Blastp 후에 사후 분석을 하기 위한 .py
 #### process.py : EMBL code를 이용해서 Uniport에서 data download  
 #### datas.py : 필요한 모든 함수들을 담아놓은 .py  
 - data_list : 모든 정보를 단순히 포함하는 .py
@@ -19,6 +20,11 @@ RubisCO 단백질 서열 CNN & 유전알고리즘을 이용한 최대 찾기
 #### ktmain.py : 같은 data를 논문에서 제시한 위치만 학습하도록 변형한 code
 #### keras_rubisco : 저장된 CNN Model  
 #### find.py : 저장된 Model을 이용헤, 지시적 진화를 통해 최대값과 해당 단백질 서열 찾기  
+#### ans 폴더
+- ans.txt : find.py 실행 결과
+- data.xml : Blastp 실행 결과
+- kmain.txt : kmain.py 실행 결과
+- ktmain.txt : ktmain.py 실행 결과
 * * *
 ## 필요한 module
 numpy  
