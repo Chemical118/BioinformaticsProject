@@ -8,8 +8,8 @@ RubisCO 단백질 서열 CNN & 유전알고리즘을 이용한 최대 찾기
 - 코드에 오류 수정 (70%에서 88%수준으로 정확도 향상)
 * * *
 ## 파일 설명
-#### afblastp.py : Blastp 후에 사후 분석을 하기 위한 .py
 #### process.py : EMBL code를 이용해서 Uniport에서 data download  
+#### phocbp.py : find.py 결과를 분석하기 위한 .py  
 #### datas.py : 필요한 모든 함수들을 담아놓은 .py  
 - data_list : 모든 정보를 단순히 포함하는 .py
 - blosum62 : BLOSUM62 matrix
