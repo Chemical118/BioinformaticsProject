@@ -1,4 +1,4 @@
-# Bioinformatics project v1.1
+# Bioinformatics project v1.2
 2021 생명정보학 Project  
 RubisCO 단백질 서열 CNN & 유전알고리즘을 이용한 최대 찾기
 
@@ -6,6 +6,10 @@ RubisCO 단백질 서열 CNN & 유전알고리즘을 이용한 최대 찾기
 - keras 모델로 학습하는 것을 기본으로 함
 - 유전알고리즘을 이용해 최대 찾는 부분 추가
 - 코드에 오류 수정 (70%에서 88%수준으로 정확도 향상)
+
+### v1.2
+- 회귀분석을 이용한 부분 추가 (rmain.py)
+- 회귀분석 실행 시에 R<sup>2</sup> 0.6 ~ 0.75 정도 나옴
 * * *
 ## 파일 설명
 #### process.py : EMBL code를 이용해서 Uniport에서 data download  
@@ -25,6 +29,7 @@ RubisCO 단백질 서열 CNN & 유전알고리즘을 이용한 최대 찾기
 - data.xml : Blastp 실행 결과
 - kmain.txt : kmain.py 실행 결과
 - ktmain.txt : ktmain.py 실행 결과
+#### rmain.py : 회귀 분석을 이용한 분석
 * * *
 ## 필요한 module
 numpy  
@@ -33,3 +38,4 @@ selenium
 pandas  
 Biopython  
 keras  
+sklearn  
