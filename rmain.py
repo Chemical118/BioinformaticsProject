@@ -37,7 +37,7 @@ test_loca_list = list(map(lambda t: [t[0]], dtot_list))  # [[아미노산의 위
 # 원하는 값에 대해서 최대 최소 찾기
 tar = 4  # 1 : kcat, 2 : Kc, 3 : Sc/o, 4 : Eff.
 data.sort(key=lambda t: -t[1][tar])
-data = data[1:]
+# data = data[1:]
 shuffle(data)
 tar_min = min(map(lambda t: t[1][tar], data))
 tar_max = max(map(lambda t: t[1][tar], data))
@@ -68,14 +68,14 @@ model = keras.Sequential([
 ])
 
 model.compile(loss='mse',
-              optimizer=tf.keras.optimizers.RMSprop(0.001),
+              optimizer=tf.keras.optimizers.RMSprop(0.0015),
               metrics=['mae', 'mse'])
 model.summary()
 # early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=100)
 
 history = model.fit(
     train_data, train_label,
-    epochs=1000, validation_split=0.2, verbose=0,
+    epochs=1000, verbose=0,
     callbacks=[PrintDot()])
 print()
 
@@ -94,18 +94,14 @@ plt.xlabel('Epoch')
 plt.ylabel('Mean Abs Error [Eff.]')
 plt.plot(hist['epoch'], hist['mae'],
          label='Train Error')
-plt.plot(hist['epoch'], hist['val_mae'],
-         label='Val Error')
-plt.ylim([0, 5])
+plt.ylim([0, 1])
 plt.legend()
 plt.subplot(2, 1, 2)
 plt.xlabel('Epoch')
 plt.ylabel('Mean Square Error [$Eff.^2$]')
 plt.plot(hist['epoch'], hist['mse'],
          label='Train Error')
-plt.plot(hist['epoch'], hist['val_mse'],
-         label='Val Error')
-plt.ylim([0, 20])
+plt.ylim([0, 0.5])
 plt.legend()
 plt.show()
 
