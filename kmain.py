@@ -54,7 +54,7 @@ model.compile(optimizer='adam',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 model.summary()
-history = model.fit(train_data, train_label, epochs=10000, batch_size=None, verbose=1)
+history = model.fit(train_data, train_label, epochs=2000, batch_size=None, verbose=1)
 
 test_loss, test_acc = model.evaluate(train_data, train_label)
 print('test_acc: ', test_acc)

@@ -121,3 +121,129 @@ def nums(a):
         return 8
     else:
         return 9
+
+
+def fkmain(epochs=2000, tar=4):
+    """
+    ["아미노산 서열 위치", "아미노산 서열", ["제곱의 합", "절댓값의 합", "최대값"]]
+    """
+    from tensorflow.keras import models
+    from tensorflow.keras import layers
+    import pickle
+    import numpy as np
+
+    with open("data/saved/data_list.pickle", "rb") as f:
+        data = pickle.load(f)
+    with open("data/saved/process.pickle", "rb") as f:
+        pros = pickle.load(f)
+    pro = pros[0]
+
+    dtot_list = list(zip(pros[1], pros[2]))  # dtot_list : [(아미노산 위치, mutation 개수).. ]
+    dtot_list = list(filter(lambda t: t[1] > 9, dtot_list))  # 8개 이상의 mutaion을 가지는 dtot_list
+    test_loca_list = list(map(lambda t: [t[0]], dtot_list))  # [[아미노산의 위치, motif 서열].. ]
+    num_data = len(data)
+    num_motif = len(test_loca_list)
+    train_data = np.zeros((num_data, num_motif))
+    train_label = np.zeros((num_data, 10))
+
+    for ind, val in enumerate(test_loca_list):
+        len_list = list(map(lambda t: len(t), pro[val[0]][1].values()))
+        test_loca_list[ind].append(pro[val[0]][0][np.argmax(len_list)])
+
+    # 원하는 값에 대해서 최대 최소 찾기
+    tar = tar  # 1 : kcat, 2 : Kc, 3 : Sc/o, 4 : Eff.
+    tar_min = min(map(lambda t: t[1][tar], data))
+    tar_max = max(map(lambda t: t[1][tar], data))
+
+    for i, sdata in enumerate(data):
+        for ind, val in enumerate(test_loca_list):
+            pro_loc = val[0]
+            pro_mot = val[1]
+            train_data[i][ind] = blosum62((pro_mot, sdata[0][pro_loc]))
+        tar_val = sdata[1][tar]
+        tar_ind = (tar_val - tar_min) / (tar_max - tar_min)
+        train_label[i][nums(tar_ind)] = 1
+
+    model = models.Sequential(name='BioInfoCNN')
+    model.add(layers.Dense(30, activation='sigmoid', input_shape=(num_motif,)))
+    model.add(layers.Dense(10, activation='sigmoid'))
+
+    model.compile(optimizer='adam',
+                  loss='categorical_crossentropy',
+                  metrics=['accuracy'])
+
+    model.fit(train_data, train_label, epochs=epochs, batch_size=None, verbose=0)
+    model_weight = model.get_weights()
+    for idx, mo in enumerate(model_weight[0]):
+        test_loca_list[idx].append([])
+        test_loca_list[idx][-1].append(sum(map(lambda t: t * t, mo)))
+        test_loca_list[idx][-1].append(sum(map(lambda t: abs(t), mo)))
+        test_loca_list[idx][-1].append(max(mo))
+
+    return test_loca_list
+
+
+def frmain(epochs=2000, tar=4):
+    """
+    ["아미노산 서열 위치", "아미노산 서열", ["제곱의 합", "절댓값의 합", "최대값"]]
+    """
+    import tensorflow as tf
+    from tensorflow import keras
+    from tensorflow.keras import layers
+    import numpy as np
+    from random import shuffle
+    import pickle
+
+    with open("data/saved/data_list.pickle", "rb") as f:
+        data = pickle.load(f)
+    with open("data/saved/process.pickle", "rb") as f:
+        pros = pickle.load(f)
+    pro = pros[0]
+
+    dtot_list = list(zip(pros[1], pros[2]))  # dtot_list : [(아미노산 위치, mutation 개수).. ]
+    dtot_list = list(filter(lambda t: t[1] > 9, dtot_list))  # 8개 이상의 mutaion을 가지는 dtot_list
+    test_loca_list = list(map(lambda t: [t[0]], dtot_list))  # [[아미노산의 위치, motif 서열].. ]
+    tar = tar  # 1 : kcat, 2 : Kc, 3 : Sc/o, 4 : Eff.
+    shuffle(data)
+    # tar_min = min(map(lambda t: t[1][tar], data))
+    # tar_max = max(map(lambda t: t[1][tar], data))
+    num_data = len(data)
+    num_motif = len(test_loca_list)
+    train_data = np.zeros((num_data, num_motif))
+    train_label = np.zeros(num_data)
+
+    for ind, val in enumerate(test_loca_list):
+        len_list = list(map(lambda t: len(t), pro[val[0]][1].values()))
+        test_loca_list[ind].append(pro[val[0]][0][np.argmax(len_list)])
+
+    for i, sdata in enumerate(data):
+        for ind, val in enumerate(test_loca_list):
+            pro_loc = val[0]
+            pro_mot = val[1]
+            train_data[i][ind] = blosum62((pro_mot, sdata[0][pro_loc])) + 4  # 0 이상으로 변환
+        tar_val = sdata[1][tar]
+        # tar_ind = (tar_val - tar_min) / (tar_max - tar_min)
+        train_label[i] = tar_val * 10
+
+    model = keras.Sequential(name='BioInfoReg')
+    model.add(layers.Dense(50, activation='relu', input_shape=(num_motif,)))
+    model.add(layers.Dense(30, activation='relu'))
+    model.add(layers.Dense(15, activation='relu'))
+    model.add(layers.Dense(1))
+
+    model.compile(loss='mse',
+                  optimizer=tf.keras.optimizers.RMSprop(0.0015),
+                  metrics=['mae', 'mse'])
+    # early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=100)
+
+    model.fit(train_data, train_label,
+              epochs=epochs, verbose=0)
+
+    model_weight = model.get_weights()
+    for idx, mo in enumerate(model_weight[0]):
+        test_loca_list[idx].append([])
+        test_loca_list[idx][-1].append(sum(map(lambda t: t * t, mo)))
+        test_loca_list[idx][-1].append(sum(map(lambda t: abs(t), mo)))
+        test_loca_list[idx][-1].append(max(mo))
+
+    return test_loca_list
