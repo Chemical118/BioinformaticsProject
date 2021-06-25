@@ -21,9 +21,6 @@ class PrintDot(keras.callbacks.Callback):
             print('')
         print('.', end='')
 
-    def on_train_end(self, logs=None):
-        print()
-
 
 # pros 구조
 # (pro, d_list, dnum_list)
@@ -53,60 +50,40 @@ for ind, val in enumerate(test_loca_list):
     len_list = list(map(lambda t: len(t), pro[val[0]][1].values()))
     test_loca_list[ind].append(pro[val[0]][0][np.argmax(len_list)])
 
+print(len(data))
 for i, sdata in enumerate(data):
     for ind, val in enumerate(test_loca_list):
         pro_loc = val[0]
         pro_mot = val[1]
         train_data[i][ind] = blo62((pro_mot, sdata[0][pro_loc])) + 4  # 0 이상으로 변환
     tar_val = sdata[1][tar]
-    # tar_ind = (tar_val - tar_min) / (tar_max - tar_min)
+    tar_ind = (tar_val - tar_min) / (tar_max - tar_min)
     train_label[i] = tar_val * 10
 
-model = keras.Sequential(name='BioInfoReg')
-model.add(layers.Dense(50, activation='relu', input_shape=(num_motif,)))
-model.add(layers.Dense(30, activation='relu'))
-model.add(layers.Dense(15, activation='relu'))
-model.add(layers.Dense(1))
-
+model = keras.Sequential([
+    layers.Dense(50, activation='relu', input_shape=[num_motif]),
+    layers.Dense(30, activation='relu'),
+    layers.Dense(15, activation='relu'),
+    layers.Dense(1)
+])
 
 model.compile(loss='mse',
               optimizer=tf.keras.optimizers.RMSprop(0.002),
               metrics=['mae', 'mse'])
 model.summary()
-# early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=100)
+# early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=500)
 
 history = model.fit(
     train_data, train_label,
-    epochs=1000, verbose=0,
+    epochs=1000, validation_split=0.1, verbose=0,
     callbacks=[PrintDot()])
+print()
+
 loss, mae, mse = model.evaluate(train_data, train_label, verbose=2)
 test_predictions = model.predict(train_data).flatten()
-r2_val = r2(train_label, test_predictions)
 
-print("평균 절대 오차 : %.2f" % mae)
-print("모델의 R^2 : %.4f" % r2_val)
-
-with open("ans/rmain.txt", "w", encoding='utf-8') as f:
-    model.summary(print_fn=lambda t: f.write(t + "\n"))
-    f.write("평균 절대 오차 : %.2f\n" % mae)
-    f.write("모델의 R^2 : %.5f\n-------------\n" % r2_val)
-
-model_weight = model.get_weights()
-for idx, mo in enumerate(model_weight[0]):
-    test_loca_list[idx].append(sum(map(lambda t: t * t, mo)))
-print("-------------")
-test_loca_list.sort(key=lambda t: -t[2])
-ref = [9, 14, 31, 86, 95, 97, 99, 142, 145, 149, 183, 189, 251, 255, 256, 262, 281, 328, 439, 449]  # 논문에 있는 자리
-for da in test_loca_list:
-    te = ""
-    if da[0] + 1 in ref:
-        te = " ★"
-    print(str(da[0] + 1) + te)
-    with open("ans/rmain.txt", "a", encoding='utf-8') as f:
-        f.write(str(da[0] + 1) + te + "\n")
-
-# model.save("reg_rubisco", overwrite=True)
-
+print("평균 절대 오차: {:5.2f}".format(mae))
+print("모델의 R^2 : %.4f" % r2(train_label, test_predictions))
 hist = pd.DataFrame(history.history)
 hist['epoch'] = history.epoch
 hist.tail()
@@ -117,14 +94,18 @@ plt.xlabel('Epoch')
 plt.ylabel('Mean Abs Error [Eff.]')
 plt.plot(hist['epoch'], hist['mae'],
          label='Train Error')
-plt.ylim([0, 1])
+plt.plot(hist['epoch'], hist['val_mae'],
+         label='Val Error')
+plt.ylim([0, 3])
 plt.legend()
 plt.subplot(2, 1, 2)
 plt.xlabel('Epoch')
 plt.ylabel('Mean Square Error [$Eff.^2$]')
 plt.plot(hist['epoch'], hist['mse'],
          label='Train Error')
-plt.ylim([0, 0.5])
+plt.plot(hist['epoch'], hist['val_mse'],
+         label='Val Error')
+plt.ylim([0, 10])
 plt.legend()
 plt.show()
 

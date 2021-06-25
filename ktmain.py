@@ -6,6 +6,7 @@ from datas import data_list
 from datas import nums
 import matplotlib.pyplot as plt
 import numpy as np
+from random import shuffle
 
 pros = process()
 data = data_list()
@@ -19,7 +20,12 @@ pro = pros[0]
 
 # data_list는 아래와 같이 반환한다.
 # [[Seq 단백질 서열, [종 이름, kcat, Kc, Sc/o, Eff., type (A or B), EMBL code], index].. ]
+# 원하는 값에 대해서 최대 최소 찾기
+tar = 4  # 1 : kcat, 2 : Kc, 3 : Sc/o, 4 : Eff.
 
+data.sort(key=lambda t: -t[1][tar])
+# data = data[1:]
+shuffle(data)
 loc_list = [9, 14, 31, 86, 95, 97, 99, 142, 145, 149, 183, 189, 251, 255, 256, 262, 281, 328, 439, 449]  # 해당 위치의 motif
 loc_list = list(map(lambda t: t - 1, loc_list))  # 위치를 Python 기준으로 수정함
 dtot_list = list(zip(pros[1], pros[2]))  # dtot_list : [(아미노산 위치, mutation 개수).. ]
@@ -34,8 +40,6 @@ for ind, val in enumerate(test_loca_list):
     len_list = list(map(lambda t: len(t), pro[val[0]][1].values()))
     test_loca_list[ind].append(pro[val[0]][0][np.argmax(len_list)])
 
-# 원하는 값에 대해서 최대 최소 찾기
-tar = 4  # 1 : kcat, 2 : Kc, 3 : Sc/o, 4 : Eff.
 tar_min = min(map(lambda t: t[1][tar], data))
 tar_max = max(map(lambda t: t[1][tar], data))
 

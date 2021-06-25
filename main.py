@@ -1,7 +1,7 @@
 import pickle
 with open("data/saved/comp.pickle", "rb") as f:
-    r_list, k_list = pickle.load(f)
-
+    r_list, k_list, num = pickle.load(f)
+    print("-----\n%d\n-----" % num)
 ref = [9, 14, 31, 86, 95, 97, 99, 142, 145, 149, 183, 189, 251, 255, 256, 262, 281, 328, 439, 449]  # 논문에 있는 자리
 
 for i in range(3):
