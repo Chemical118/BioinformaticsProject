@@ -10,6 +10,11 @@ RubisCO 단백질 서열 CNN & 유전알고리즘을 이용한 최대 찾기
 ### v1.2
 - 회귀분석을 이용한 부분 추가 (rmain.py)
 - 회귀분석 실행 시에 R<sup>2</sup> 0.6 ~ 0.75 정도 나옴
+
+### v1.3
+<현재 계획>
+CNN을 이용하는 방식 폐기 ==> Random Forest, SVR 방식 중에 선택  
+SVR 선택 : Random Forest 방식은 현재 최대를 나타낼 수 없다는 단점 존재 ㅇㅅㅇ;; (내가 나중에 유전 알고리즘을 이용해서 개선을 해야하는데 외미가 없다..)
 * * *
 ## 파일 설명
 #### process.py : EMBL code를 이용해서 Uniport에서 data download  
@@ -30,10 +35,6 @@ RubisCO 단백질 서열 CNN & 유전알고리즘을 이용한 최대 찾기
 - kmain.txt : kmain.py 실행 결과
 - ktmain.txt : ktmain.py 실행 결과
 #### rmain.py : 회귀 분석을 이용한 분석
-### v1.3
-<현재 계획>
-CNN을 이용하는 방식 폐기 ==> Random Forest, SVR 방식 중에 선택  
-SVR 선택 : Random Forest 방식은 현재 최대를 나타낼 수 없다는 단점 존재 ㅇㅅㅇ;; (내가 나중에 유전 알고리즘을 이용해서 개선을 해야하는데 외미가 없다..)
 * * *
 ## 필요한 module
 numpy  
