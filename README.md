@@ -44,3 +44,7 @@ pandas
 Biopython  
 keras  
 sklearn  
+
+***
+## 나중에 할 것
++ Class 구현 (by ijk)
